@@ -1,0 +1,18 @@
+---
+kind: pipeline
+type: docker
+name: w3c validate php2html
+steps:
+  - name: initialize git submodules
+    image: alpine/git
+    commands:
+      - git submodule update --init
+  - name: generate html from php
+    image: php:7.4-cli
+    commands:
+      - php ./index.php | tee index.html
+  - name: w3c validate
+    image: python:3.10-bullseye
+    commands:
+      - pip install -U Online-W3C-Validator
+      - w3c_validator index.html
