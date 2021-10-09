@@ -16,3 +16,21 @@ steps:
     commands:
       - pip install -U Online-W3C-Validator
       - w3c_validator index.html
+---
+kind: pipeline
+type: docker
+name: test in apache
+steps:
+  - name: initialize git submodules
+    image: alpine/git
+    commands:
+      - git submodule update --init
+  - name: apache
+    image: php:7.4-apache-bullseye
+    commands:
+      - apt update
+      - apt install curl -y
+      - mv * /var/www/html
+      - apache2-foreground &
+      - sleep 10
+      - curl http://127.0.0.1:80
