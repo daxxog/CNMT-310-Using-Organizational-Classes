@@ -19,13 +19,13 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: test in apache
+name: test post in apache
 steps:
   - name: initialize git submodules
     image: alpine/git
     commands:
       - git submodule update --init
-  - name: apache
+  - name: run apache and curl
     image: php:7.4-apache-bullseye
     commands:
       - apt update
@@ -33,4 +33,9 @@ steps:
       - mv * /var/www/html
       - apache2-foreground &
       - sleep 10
-      - curl http://127.0.0.1:80
+      - curl 'http://127.0.0.1:80/another-page.php' -X POST -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:92.0) Gecko/20100101 Firefox/92.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Content-Type: application/x-www-form-urlencoded' -H 'Origin: http://127.0.0.1:80' -H 'Connection: keep-alive' -H 'Referer: http://127.0.0.1:80/' -H 'Cookie: username=admin' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: same-origin' -H 'Sec-Fetch-User: ?1' --data-raw 'username=test&password=test&confirm-password=test&email-address=test%40example.com' | tee another-page.html
+  - name: w3c validate
+    image: python:3.10-bullseye
+    commands:
+      - pip install -U Online-W3C-Validator
+      - w3c_validator another-page.html
