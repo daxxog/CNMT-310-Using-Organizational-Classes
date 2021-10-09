@@ -10,6 +10,7 @@ foreach($required_elements as $element){
 require_once('./phpclasses-template/Template.php');
 
 $page = new Template("User Registration");
+$page->addHeadElement("<meta charset=\"utf-8\">");
 $page->finalizeTopSection();
 $page->finalizeBottomSection();
 
